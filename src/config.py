@@ -4,11 +4,10 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 MODEL_DIR = ROOT / "models"
 
-DEFAULT_DATASET = Path(
-    r"c:\Data\data2\flipkartgridlock\traffic_v3_bigzipped\traffic_v3_big"
-    r"\Astram event data_anonymized - Astram event data_anonymizedb40ac87.csv"
-)
+# UPDATED: Use a relative path so it works on Render and locally without absolute paths
+DEFAULT_DATASET = DATA_DIR / "Astram_event_data.csv"
 SAMPLE_CSV = DEFAULT_DATASET if DEFAULT_DATASET.exists() else DATA_DIR / "sample_events.csv"
+
 MODEL_PATH = MODEL_DIR / "impact_model.joblib"
 RESOURCE_MODEL_PATH = MODEL_DIR / "resource_model.joblib"
 METRICS_PATH = MODEL_DIR / "metrics.json"

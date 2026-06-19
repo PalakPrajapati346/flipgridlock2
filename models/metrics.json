@@ -1,0 +1,39 @@
+{
+  "model_name": "random_forest",
+  "rows": 8173,
+  "evaluation": "5-fold_cross_validation",
+  "leakage_removed": [
+    "duration_minutes",
+    "status"
+  ],
+  "cv_mae": 0.112,
+  "cv_mae_std": 0.042,
+  "cv_rmse": 1.701,
+  "cv_rmse_std": 0.735,
+  "cv_r2": 0.253,
+  "cv_r2_std": 0.336,
+  "cv_mape": 2.965,
+  "cv_mape_std": 1.151,
+  "cv_folds": 5,
+  "feature_importance": {
+    "corridor_non-corridor": 0.3384,
+    "latitude": 0.2741,
+    "longitude": 0.1378,
+    "priority_high": 0.0909,
+    "junction_subedarchatramrd near sheshadripuramps": 0.0431,
+    "requires_road_closure": 0.0298,
+    "start_dow": 0.0133,
+    "start_month": 0.0119,
+    "start_hour": 0.0103,
+    "police_station_basavanagudi": 0.008,
+    "is_peak_hour": 0.0067,
+    "has_vehicle": 0.006,
+    "veh_type_unknown": 0.0039,
+    "junction_ringroad-ullaljunction": 0.0037,
+    "veh_type_bmtc_bus": 0.002
+  },
+  "mae": 0.112,
+  "r2": 0.253,
+  "rmse": 1.701,
+  "mape": 2.965
+}

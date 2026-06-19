@@ -1,0 +1,7 @@
+{
+  "manpower_operational_deviation": 0.1,
+  "barricades_operational_deviation": 0.09,
+  "clearance_operational_deviation": 1.09,
+  "label_source": "historical_impact_pseudo_labels",
+  "note": "Metrics represent RMSE in operational units (deviation from historical expert assignments)."
+}

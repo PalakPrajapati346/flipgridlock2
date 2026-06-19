@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Gridlock 2.0</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <nav class="nav">
+    <div class="brand">Gridlock 2.0</div>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/dashboard" class="active">Dashboard</a>
+      <a href="/forecast">Live Ops</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header class="hero compact">
+      <h1>Historical Insights &amp; Model Evaluation</h1>
+      <p>Computed from {{ summary.total_events }} Astram records · 5-fold cross-validation (no leakage)</p>
+    </header>
+
+    {% set fa = summary.forecast_accuracy %}
+    {% if fa.cv_r2 is not none %}
+    <section class="grid-4">
+      <article class="card stat"><span class="label">Forecast MAE</span><strong>{{ fa.cv_mae }} ± {{ fa.cv_mae_std }}</strong></article>
+      <article class="card stat"><span class="label">Forecast RMSE</span><strong>{{ fa.cv_rmse }} ± {{ fa.cv_rmse_std }}</strong></article>
+      <article class="card stat"><span class="label">Mean CV R²</span><strong>{{ fa.cv_r2 }} ± {{ fa.cv_r2_std }}</strong></article>
+      <article class="card stat"><span class="label">MAPE</span><strong>{{ fa.cv_mape }}% ± {{ fa.cv_mape_std }}%</strong></article>
+    </section>
+    <section class="grid-3">
+      <article class="card stat"><span class="label">Post-Event Error (CV MAE)</span><strong>{{ summary.post_event_error_mae }}</strong></article>
+      <article class="card stat"><span class="label">Est. Response Time Saved</span><strong>{{ summary.response_time_saved_min }} min/event</strong></article>
+      <article class="card stat"><span class="label">Leakage Removed</span><strong>{{ fa.leakage_removed | join(', ') }}</strong></article>
+    </section>
+    {% endif %}
+
+    {% set de = summary.deployment_efficiency %}
+    {% if de.diversion_accuracy is not none %}
+    <section class="grid-4">
+      <article class="card stat"><span class="label">Deployment — Diversion Accuracy</span><strong>{{ (de.diversion_accuracy * 100) | round(1) }}%</strong></article>
+      <article class="card stat"><span class="label">Manpower MAE</span><strong>{{ de.manpower_mae }}</strong></article>
+      <article class="card stat"><span class="label">Barricades MAE</span><strong>{{ de.barricades_mae }}</strong></article>
+      <article class="card stat"><span class="label">Resource Model</span><strong>Learned</strong></article>
+    </section>
+    {% endif %}
+
+    <section class="grid-4 telemetry-grid">
+      <article class="card stat telemetry">
+        <span class="label">Avg Speed</span>
+        <strong class="val-orange">{{ summary.telemetry.avg_speed_kmh }} km/h</strong>
+      </article>
+      <article class="card stat telemetry">
+        <span class="label">Avg Queue / Event</span>
+        <strong class="val-green">{{ summary.telemetry.gridlock_queue_veh }} veh</strong>
+      </article>
+      <article class="card stat telemetry">
+        <span class="label">Median CO₂ / Event</span>
+        <strong class="val-cyan">{{ summary.telemetry.idle_co2_kg }} kg</strong>
+      </article>
+      <article class="card stat telemetry">
+        <span class="label">Median Fuel / Event</span>
+        <strong class="val-yellow">₹{{ '{:,.0f}'.format(summary.telemetry.fuel_cost_inr) }}</strong>
+      </article>
+    </section>
+
+    <section class="grid-2">
+      <article class="card">
+        <h2>Impact Distribution</h2>
+        <table>
+          <thead><tr><th>Band</th><th>Count</th><th>%</th></tr></thead>
+          <tbody>
+            {% for row in summary.impact_distribution %}
+            <tr><td>{{ row.band }}</td><td>{{ row.count }}</td><td>{{ row.pct }}%</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </article>
+      <article class="card">
+        <h2>Model Performance Detail</h2>
+        {% if summary.model_metrics %}
+        <ul class="list">
+          <li><strong>Model:</strong> {{ summary.model_metrics.model_name }}</li>
+          <li><strong>Evaluation:</strong> {{ summary.model_metrics.evaluation | default('5-fold CV') }}</li>
+          <li><strong>Training rows:</strong> {{ summary.model_metrics.rows }}</li>
+          <li><strong>Excluded (leakage):</strong> {{ summary.model_metrics.leakage_removed | join(', ') }}</li>
+        </ul>
+        {% if summary.model_metrics.feature_importance %}
+        <h3>Top Features (no duration)</h3>
+        <table>
+          <thead><tr><th>Feature</th><th>Importance</th></tr></thead>
+          <tbody>
+            {% for name, val in summary.model_metrics.feature_importance.items() %}
+            {% if loop.index <= 8 %}
+            <tr><td>{{ name }}</td><td>{{ val }}</td></tr>
+            {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+        {% else %}
+        <p class="muted">Run <code>python run_train.py</code></p>
+        {% endif %}
+      </article>
+    </section>
+
+    <section class="grid-2">
+      <article class="card">
+        <h2>Impact by Event Type</h2>
+        <table>
+          <thead><tr><th>Type</th><th>Count</th><th>Avg Impact</th></tr></thead>
+          <tbody>
+            {% for row in summary.by_event_type %}
+            <tr><td>{{ row.event_type }}</td><td>{{ row['count'] }}</td><td>{{ row['mean'] }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </article>
+      <article class="card">
+        <h2>Top Corridors by Impact</h2>
+        <table>
+          <thead><tr><th>Corridor</th><th>Avg Impact</th></tr></thead>
+          <tbody>
+            {% for row in summary.top_corridors %}
+            <tr><td>{{ row.corridor }}</td><td>{{ row.avg_impact }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

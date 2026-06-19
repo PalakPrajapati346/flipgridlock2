@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gridlock 2.0 — AI Command Center</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="ops-body">
+  <nav class="nav">
+    <div class="brand">GRIDLOCK 2.0 // AI COMMAND CENTER</div>
+    <div class="nav-links">
+      <a href="/" class="active">Overview</a>
+      <a href="/dashboard">Historical</a>
+      <a href="/forecast">Live Ops</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header class="hero">
+      <p class="eyebrow">Targeting Theme 2: Event-Driven Congestion | Astram XAI Integration</p>
+      <h1>AI Traffic Command Center</h1>
+      <p>Real-time incident intelligence and deployment forecasting. All metrics below are computed from <strong>{{ summary.total_events }} historical Astram events</strong>.</p>
+    </header>
+
+    <div class="kpi-hero-container" style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 2rem;">
+        <div class="kpi-card" style="background: #1a1e23; padding: 20px; border-radius: 8px; border-left: 4px solid #888; flex: 1; min-width: 200px; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;">
+            <h4 style="margin: 0; color: #aaa; font-weight: normal; font-size: 0.9rem; text-transform: uppercase;">Total Events Analysed</h4>
+            <h2 style="margin: 10px 0 0 0; color: #fff; font-size: 2.2rem;">{{ summary.total_events }}</h2>
+        </div>
+        <div class="kpi-card" style="background: #1a1e23; padding: 20px; border-radius: 8px; border-left: 4px solid #00ff88; flex: 1; min-width: 200px; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;">
+            <h4 style="margin: 0; color: #aaa; font-weight: normal; font-size: 0.9rem; text-transform: uppercase;">Response Time Saved</h4>
+            <h2 style="margin: 10px 0 0 0; color: #00ff88; font-size: 2.2rem;">{{ summary.response_time_saved_min or '--' }} min<span style="font-size: 1rem; color: #888;"> / event</span></h2>
+        </div>
+        <div class="kpi-card" style="background: #1a1e23; padding: 20px; border-radius: 8px; border-left: 4px solid #00d4ff; flex: 1; min-width: 200px; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;">
+            <h4 style="margin: 0; color: #aaa; font-weight: normal; font-size: 0.9rem; text-transform: uppercase;">Idle CO₂ Prevented</h4>
+            <h2 style="margin: 10px 0 0 0; color: #00d4ff; font-size: 2.2rem;">{{ summary.telemetry.idle_co2_kg }} kg<span style="font-size: 1rem; color: #888;"> / event</span></h2>
+        </div>
+        <div class="kpi-card" style="background: #1a1e23; padding: 20px; border-radius: 8px; border-left: 4px solid #ffcc00; flex: 1; min-width: 200px; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;">
+            <h4 style="margin: 0; color: #aaa; font-weight: normal; font-size: 0.9rem; text-transform: uppercase;">Fuel Waste Saved</h4>
+            <h2 style="margin: 10px 0 0 0; color: #ffcc00; font-size: 2.2rem;">₹{{ '{:,.0f}'.format(summary.telemetry.fuel_cost_inr) }}<span style="font-size: 1rem; color: #888;"> / event</span></h2>
+        </div>
+    </div>
+
+    <section class="grid-3" style="margin-bottom: 2rem;">
+      <article class="card stat">
+        <span class="label">AI Diversion Accuracy</span>
+        <strong style="color: #00ff88;">
+          {% if summary.deployment_efficiency.diversion_accuracy is not none %}
+            {{ (summary.deployment_efficiency.diversion_accuracy * 100) | round(1) }}%
+          {% else %}
+            --
+          {% endif %}
+        </strong>
+        <span class="sub">Validating automated rerouting vs historical manual logs</span>
+      </article>
+      <article class="card stat telemetry">
+        <span class="label">Avg Speed Prediction</span>
+        <strong class="val-orange">{{ summary.telemetry.avg_speed_kmh }} km/h</strong>
+        <span class="sub">Impact score × corridor free-flow capacity</span>
+      </article>
+      <article class="card stat telemetry">
+        <span class="label">Avg Gridlock Queue</span>
+        <strong class="val-orange">{{ summary.telemetry.gridlock_queue_veh }} vehicles</strong>
+        <span class="sub">Baseline flow × congestion delay minutes</span>
+      </article>
+    </section>
+
+    <section class="grid-2">
+      <article class="card">
+        <h2>Physics + ML Engine</h2>
+        <ul class="list" style="color: var(--text); line-height: 1.6;">
+          <li><strong>Speed & Flow:</strong> Historical corridor free-flow mathematically reduced by the ML impact score and active road closure multi-factors.</li>
+          <li><strong>Environmental Impact:</strong> Queue length × idle time conversion factors.</li>
+          <li><strong>Explainable AI:</strong> Random Forest predictions validated by 5-fold CV with strict target leakage removal to ensure pre-event honesty.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>Command Center Operations</h2>
+        <p class="muted" style="line-height: 1.6; margin-bottom: 1.5rem;">This system replaces manual estimation with <strong>historical ML intelligence + city-scale physics formulas</strong>. By forecasting directly from over 8,000 real events, the platform provides actionable, real-time decision support for immediate police deployment.</p>
+        <div class="actions">
+          <a class="btn primary" href="/forecast">Open Live Ops Console</a>
+          <a class="btn" href="/dashboard">View Historical Breakdown</a>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

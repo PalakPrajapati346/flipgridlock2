@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import time
 from pathlib import Path
 from flask import Flask, jsonify, render_template, request
@@ -9,7 +10,7 @@ from flask import Flask, jsonify, render_template, request
 from src.config import ROOT, SAMPLE_CSV
 from src.data_loader import load_events
 from src.predict import historical_summary, predict_event
-from src.resource_model import load_resource_metrics  # Fixed Import
+from src.resource_model import load_resource_metrics
 from src.telemetry import load_corridor_stats
 from src.train import load_metrics
 
@@ -75,4 +76,6 @@ def api_summary():
     return jsonify(historical_summary(df))
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    # Updated to use the port assigned by the environment (e.g., Render)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=True, host="0.0.0.0", port=port)
